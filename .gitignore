@@ -1,0 +1,5 @@
+*.o
+*.so
+*.so.*
+platform/target/
+main

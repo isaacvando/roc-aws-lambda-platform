@@ -15,11 +15,12 @@ path = "src/main.rs"
 [dependencies]
 libc = "0.2"
 roc_std = { path = "src/roc_std", features = ["std"] }
-lambda_http = "0.8.3"
 lambda_runtime = "0.8.3"
+serde = "1.0.136"
 tokio = { version = "1", features = ["macros"] }
 tracing = { version = "0.1", features = ["log"] }
 tracing-subscriber = { version = "0.3", default-features = false, features = [
+    "env-filter",
     "fmt",
 ] }
 

@@ -1,6 +1,6 @@
-app "rocLovesRust"
+app "main"
     packages { pf: "platform/main.roc" }
     imports []
     provides [main] to pf
 
-main = "newwerrrrr"
+main = "A roc string!"

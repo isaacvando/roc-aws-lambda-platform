@@ -86,13 +86,13 @@ pub unsafe extern "C" fn roc_shm_open(
 
 #[no_mangle]
 pub extern "C" fn rust_main() -> i32 {
-    let mut roc_str = RocStr::default();
-    unsafe { roc_main(&mut roc_str) };
+    // let mut roc_str = RocStr::default();
+    // unsafe { roc_main(&mut roc_str) };
 
-    if let Err(e) = std::io::stdout().write_all(roc_str.as_bytes()) {
-        panic!("Writing to stdout failed! {:?}", e);
-    }
+    // if let Err(e) = std::io::stdout().write_all(roc_str.as_bytes()) {
+    //     panic!("Writing to stdout failed! {:?}", e);
+    // }
 
-    // Exit code
+    // // Exit code
     0
 }

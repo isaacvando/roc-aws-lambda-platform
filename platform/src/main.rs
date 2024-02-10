@@ -2,7 +2,8 @@
 //     std::process::exit(host::rust_main() as _);
 // }
 
-use tracing_subscriber::filter::{EnvFilter, LevelFilter};use lambda_runtime::{run, service_fn, Error, LambdaEvent};
+use lambda_runtime::{run, service_fn, Error, LambdaEvent};
+use tracing_subscriber::filter::{EnvFilter, LevelFilter};
 
 use serde::{Deserialize, Serialize};
 

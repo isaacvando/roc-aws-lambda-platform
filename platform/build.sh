@@ -5,4 +5,9 @@ mv libapp.so.1.0 libapp.so
 
 cp libapp.so target/debug/libapp.so.1
 
-cargo lambda build
+cargo lambda build --release
+
+# Add libapp.so to the bootstrap.zip file
+
+cd target/debug
+zip -r ../lambda/host/bootstrap.zip libapp.so.1

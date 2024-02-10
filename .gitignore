@@ -2,4 +2,4 @@
 *.so
 *.so.*
 platform/target/
-main
+bootstrap.zip

@@ -19,13 +19,11 @@ struct Response {
 }
 
 async fn function_handler(event: LambdaEvent<Request>) -> Result<Response, Error> {
-    let command = event.payload.command;
-
-    host::rust_main();
+    let roc_str = host::rust_main();
 
     let resp = Response {
         req_id: event.context.request_id,
-        msg: format!("Command {}.", command),
+        msg: roc_str,
     };
 
     Ok(resp)

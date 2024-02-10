@@ -1,32 +1,8 @@
-// fn main() {
-//     std::process::exit(host::rust_main() as _);
-// }
-
 use lambda_runtime::{run, service_fn, Error, LambdaEvent};
 use tracing_subscriber::filter::{EnvFilter, LevelFilter};
 
-use serde::{Deserialize, Serialize};
-
-#[derive(Deserialize)]
-struct Request {
-    command: String,
-}
-
-#[derive(Serialize)]
-struct Response {
-    req_id: String,
-    msg: String,
-}
-
-async fn function_handler(event: LambdaEvent<Request>) -> Result<Response, Error> {
-    let roc_str = host::rust_main();
-
-    let resp = Response {
-        req_id: event.context.request_id,
-        msg: roc_str,
-    };
-
-    Ok(resp)
+async fn function_handler(_: LambdaEvent<String>) -> Result<String, Error> {
+    Ok(host::rust_main())
 }
 
 #[tokio::main]

@@ -2,7 +2,6 @@
 
 use core::ffi::c_void;
 use roc_std::RocStr;
-use std::io::Write;
 
 extern "C" {
     #[link_name = "roc__mainForHost_1_exposed_generic"]

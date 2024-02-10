@@ -12,7 +12,7 @@ name="$1"
 set -u
 
 # Check if the lambda already exists
-if aws lambda get-function --function-name "$name" > /dev/null
+if aws lambda get-function --function-name "$name" > /dev/null 2>&1
 then
     aws lambda update-function-code --function-name "$name" --zip-file fileb://bootstrap.zip > /dev/null
 else

@@ -1,11 +1,12 @@
 #![allow(non_snake_case)]
 
 use core::ffi::c_void;
+use roc_std::RocList;
 use roc_std::RocStr;
 
 extern "C" {
     #[link_name = "roc__mainForHost_1_exposed_generic"]
-    fn roc_main(_: &mut RocStr, _: u8);
+    fn roc_main(_: &mut RocStr, _: &RocList<u8>);
 }
 
 #[no_mangle]
@@ -84,7 +85,8 @@ pub unsafe extern "C" fn roc_shm_open(
 #[no_mangle]
 pub fn rust_main() -> String {
     let mut roc_str = RocStr::default();
-    unsafe { roc_main(&mut roc_str, 2) };
+    let bytes = "this is the request!".as_bytes();
+    unsafe { roc_main(&mut roc_str, &RocList::from_slice(bytes)) };
 
     roc_str.as_str().to_string()
 }

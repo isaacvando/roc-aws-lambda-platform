@@ -1,9 +1,9 @@
 platform "roc-aws-lambda"
-    requires {} { main : U8 -> Str }
+    requires {} { main : List U8 -> Str }
     exposes []
     packages {}
     imports []
     provides [mainForHost]
 
-mainForHost : U8 -> Str
+mainForHost : List U8 -> Str
 mainForHost = \x -> main x

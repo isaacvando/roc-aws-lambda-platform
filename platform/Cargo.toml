@@ -17,6 +17,7 @@ libc = "0.2"
 roc_std = { path = "src/roc_std", features = ["std"] }
 lambda_runtime = "0.8.3"
 serde = "1.0.136"
+serde_json = "1.0.114"
 tokio = { version = "1", features = ["macros"] }
 tracing = { version = "0.1", features = ["log"] }
 tracing-subscriber = { version = "0.3", default-features = false, features = [

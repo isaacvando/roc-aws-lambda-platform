@@ -83,10 +83,10 @@ pub unsafe extern "C" fn roc_shm_open(
 }
 
 #[no_mangle]
-pub fn rust_main() -> String {
+pub fn rust_main(request: Vec<u8>) -> String {
     let mut roc_str = RocStr::default();
-    let bytes = "this is the request!".as_bytes();
-    unsafe { roc_main(&mut roc_str, &RocList::from_slice(bytes)) };
+    // let bytes = "this is the request!".as_bytes();
+    unsafe { roc_main(&mut roc_str, &RocList::from_slice(request.as_slice())) };
 
     roc_str.as_str().to_string()
 }

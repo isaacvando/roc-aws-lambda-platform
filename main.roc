@@ -1,10 +1,24 @@
 app "main"
-    packages { pf: "platform/main.roc" }
-    imports []
+    packages {
+        pf: "platform/main.roc",
+        json: "https://github.com/lukewilliamboswell/roc-json/releases/download/0.6.3/_2Dh4Eju2v_tFtZeMq8aZ9qw2outG04NbkmKpFhXS_4.tar.br",
+    }
+    imports [
+        json.Core
+    ]
     provides [main] to pf
 
-main = \req -> 
-    reqStr = when Str.fromUtf8 req is
-        Ok r -> r
-        Err _ -> crash "utf problem"
-    "request: $(reqStr)"
+Request : {
+    rawPath: Str
+}
+
+main = \bytes ->
+    when getRequest bytes is
+        Err _ -> "Error deserializing request"
+        Ok req -> 
+            "Hello $(req.rawPath)!"
+
+getRequest : List U8 -> Result Request _
+getRequest = \bytes -> 
+    Decode.fromBytes bytes Core.json
+    

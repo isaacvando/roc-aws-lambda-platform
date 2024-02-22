@@ -3,4 +3,4 @@ app "main"
     imports []
     provides [main] to pf
 
-main = "A roc string!"
+main = \num -> "Number passed in: $(Num.toStr num)"

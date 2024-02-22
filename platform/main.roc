@@ -1,9 +1,9 @@
-platform "echo-in-rust"
-    requires {} { main : Str }
+platform "roc-aws-lambda"
+    requires {} { main : U8 -> Str }
     exposes []
     packages {}
     imports []
     provides [mainForHost]
 
-mainForHost : Str
-mainForHost = main
+mainForHost : U8 -> Str
+mainForHost = \x -> main x

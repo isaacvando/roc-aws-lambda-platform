@@ -5,7 +5,7 @@ use roc_std::RocStr;
 
 extern "C" {
     #[link_name = "roc__mainForHost_1_exposed_generic"]
-    fn roc_main(_: &mut RocStr);
+    fn roc_main(_: &mut RocStr, _: u8);
 }
 
 #[no_mangle]
@@ -82,9 +82,9 @@ pub unsafe extern "C" fn roc_shm_open(
 }
 
 #[no_mangle]
-pub extern "C" fn rust_main() -> String {
+pub fn rust_main() -> String {
     let mut roc_str = RocStr::default();
-    unsafe { roc_main(&mut roc_str) };
+    unsafe { roc_main(&mut roc_str, 2) };
 
     roc_str.as_str().to_string()
 }

@@ -5,7 +5,6 @@ use tracing_subscriber::filter::{EnvFilter, LevelFilter};
 async fn function_handler(event: LambdaEvent<Value>) -> Result<String, Error> {
     let payload = event.into_parts().0;
     let bytes = serde_json::to_vec(&payload).unwrap();
-    println!("{:?}", bytes);
     Ok(host::rust_main(bytes))
 }
 

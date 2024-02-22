@@ -6,7 +6,7 @@ use roc_std::RocStr;
 
 extern "C" {
     #[link_name = "roc__mainForHost_1_exposed_generic"]
-    fn roc_main(_: &mut RocStr, _: &RocList<u8>);
+    fn roc_main(_: &mut RocStr, _: &mut core::mem::ManuallyDrop<RocList<u8>>);
 }
 
 #[no_mangle]
@@ -85,8 +85,9 @@ pub unsafe extern "C" fn roc_shm_open(
 #[no_mangle]
 pub fn rust_main(request: Vec<u8>) -> String {
     let mut roc_str = RocStr::default();
-    // let bytes = "this is the request!".as_bytes();
-    unsafe { roc_main(&mut roc_str, &RocList::from_slice(request.as_slice())) };
+    let bytes = RocList::from(request.as_slice());
+
+    unsafe { roc_main(&mut roc_str, &mut core::mem::ManuallyDrop::new(bytes)) };
 
     roc_str.as_str().to_string()
 }

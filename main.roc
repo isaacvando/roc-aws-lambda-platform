@@ -16,9 +16,47 @@ main = \bytes ->
     when getRequest bytes is
         Err _ -> "Error deserializing request"
         Ok req -> 
-            "Hello $(req.rawPath)!"
+            response req
 
 getRequest : List U8 -> Result Request _
 getRequest = \bytes -> 
     Decode.fromBytes bytes Core.json
     
+
+response = \req -> 
+    bodyStr = body req 
+        |> Encode.toBytes Core.json
+        |> Str.fromUtf8
+        |> Result.withDefault "utf8 error"
+    """
+    {
+        "statusCode": 200,
+        "headers": {
+            "content-type": "text/html"
+        },
+        "body": $(bodyStr)
+    }
+    """
+
+body = \req -> 
+    """
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <title>Example Domain</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+
+    <body>
+    <div>
+        <h1>roc-aws-lambda</h1>
+        <p>Hello $(req.rawPath)!</p>
+        <p>Try updating the part of the url after .aws</p>
+    </div>
+
+    </body>
+    </html>
+    """

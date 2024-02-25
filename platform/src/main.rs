@@ -2,10 +2,11 @@ use lambda_runtime::{run, service_fn, Error, LambdaEvent};
 use serde_json::Value;
 use tracing_subscriber::filter::{EnvFilter, LevelFilter};
 
-async fn function_handler(event: LambdaEvent<Value>) -> Result<String, Error> {
+async fn function_handler(event: LambdaEvent<Value>) -> Result<Value, Error> {
     let payload = event.into_parts().0;
     let bytes = serde_json::to_vec(&payload).unwrap();
-    Ok(host::rust_main(bytes))
+    let response = host::rust_main(bytes);
+    Ok(serde_json::from_str(&response).unwrap())
 }
 
 #[tokio::main]

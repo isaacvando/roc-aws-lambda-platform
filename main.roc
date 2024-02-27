@@ -12,26 +12,25 @@ Request : {
     rawPath : Str,
 }
 
+main : List U8 -> Str
 main = \bytes ->
-    when getRequest bytes is
-        Err _ -> "Error deserializing request"
+    when Decode.fromBytes bytes Core.json is
+        Err _ -> "I was unable to decode the request into the expected type"
         Ok req ->
-            response req
+            respond req
 
-getRequest : List U8 -> Result Request _
-getRequest = \bytes ->
-    Decode.fromBytes bytes Core.json
-
-response = \req ->
-    bodyStr =
+respond : Request -> Str
+respond = \req ->
+    serializedHtml =
         body req
         |> Encode.toBytes Core.json
         |> Str.fromUtf8
         |> Result.withDefault "Utf8 Error"
     """
-    {"statusCode": 200,"headers":{"Content-Type": "text/html"},"body":$(bodyStr)}
+    {"statusCode": 200,"headers":{"Content-Type": "text/html"},"body":$(serializedHtml)}
     """
 
+body : Request -> Str
 body = \req ->
     name =
         when Str.split req.rawPath "/" is

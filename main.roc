@@ -4,6 +4,7 @@ app "main"
         json: "https://github.com/lukewilliamboswell/roc-json/releases/download/0.6.3/_2Dh4Eju2v_tFtZeMq8aZ9qw2outG04NbkmKpFhXS_4.tar.br",
     }
     imports [
+        pf.Task.{ Task },
         json.Core,
     ]
     provides [main] to pf
@@ -12,12 +13,12 @@ Request : {
     rawPath : Str,
 }
 
-main : List U8 -> Str
+main : List U8 -> Task Str Str
 main = \bytes ->
     when Decode.fromBytes bytes Core.json is
-        Err _ -> "I was unable to decode the request into the expected type"
+        Err _ -> Task.err "I was unable to decode the request into the expected type"
         Ok req ->
-            respond req
+            respond req |> Task.ok
 
 respond : Request -> Str
 respond = \req ->

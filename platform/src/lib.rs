@@ -3,11 +3,13 @@
 use core::ffi::c_void;
 use roc_std::RocList;
 use roc_std::RocStr;
+mod http_client;
+mod roc_app;
 
-extern "C" {
-    #[link_name = "roc__mainForHost_1_exposed_generic"]
-    fn roc_main(_: &mut RocStr, _: &mut core::mem::ManuallyDrop<RocList<u8>>);
-}
+// extern "C" {
+//     #[link_name = "roc__mainForHost_1_exposed_generic"]
+//     fn roc_main(_: &mut RocStr, _: &mut core::mem::ManuallyDrop<RocList<u8>>);
+// }
 
 #[no_mangle]
 pub unsafe extern "C" fn roc_alloc(size: usize, _alignment: u32) -> *mut c_void {
@@ -82,12 +84,68 @@ pub unsafe extern "C" fn roc_shm_open(
     libc::shm_open(name, oflag, mode as libc::c_uint)
 }
 
-#[no_mangle]
-pub fn rust_main(request: Vec<u8>) -> String {
-    let mut roc_str = RocStr::default();
-    let bytes = RocList::from(request.as_slice());
+fn roc_fx_sendRequest(roc_request: &roc_app::InternalRequest) -> roc_app::InternalResponse {
+    http_client::send_req(roc_request)
+}
 
-    unsafe { roc_main(&mut roc_str, &mut core::mem::ManuallyDrop::new(bytes)) };
+// #[no_mangle]
+// pub fn rust_main(request: Vec<u8>) -> String {
+//     let mut roc_str = RocStr::default();
+//     let bytes = RocList::from(request.as_slice());
 
-    roc_str.as_str().to_string()
+//     unsafe { roc_main(&mut roc_str, &mut core::mem::ManuallyDrop::new(bytes)) };
+
+//     roc_str.as_str().to_string()
+// }
+
+
+#[repr(C)]
+#[derive(Debug)]
+pub struct RocFunction_86 {
+    closure_data: Vec<u8>,
+}
+
+impl RocFunction_86 {
+    pub fn force_thunk(mut self) -> String {
+        extern "C" {
+            fn roc__mainForHost_0_caller(
+                arg0: *const (),
+                closure_data: *mut u8,
+                output: *mut String,
+            );
+        }
+
+        let mut output = core::mem::MaybeUninit::uninit();
+
+        unsafe {
+            roc__mainForHost_0_caller(&(), self.closure_data.as_mut_ptr(), output.as_mut_ptr());
+
+            output.assume_init()
+        }
+    }
+}
+
+pub fn mainForHost(request: Vec<u8>) -> RocFunction_86 {
+    extern "C" {
+        fn roc__mainForHost_1_exposed_generic(_: *mut u8, _: &mut core::mem::ManuallyDrop<RocList<u8>>);
+        fn roc__mainForHost_1_exposed_size() -> i64;
+    }
+
+    unsafe {
+        let capacity = roc__mainForHost_1_exposed_size() as usize;
+
+        let mut ret = RocFunction_86 {
+            closure_data: Vec::with_capacity(capacity),
+        };
+        ret.closure_data.resize(capacity, 0);
+
+        let bytes = RocList::from(request.as_slice());
+    
+        roc__mainForHost_1_exposed_generic(
+            ret.closure_data.as_mut_ptr(),
+            &mut core::mem::ManuallyDrop::new(bytes),
+        );
+
+        ret
+    }
 }

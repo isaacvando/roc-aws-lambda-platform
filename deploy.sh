@@ -7,7 +7,14 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
+if [ -z "$2" ]; then
+    echo "Please provide the arn of the Lambda execution role you would like to use"
+    echo "Usage: $0 my_lambda"
+    exit 1
+fi
+
 name="$1"
+role="$2"
 
 set -u
 
@@ -20,7 +27,7 @@ else
       --handler bootstrap \
       --zip-file fileb://bootstrap.zip \
       --runtime provided.al2023 \
-      --role arn:aws:iam::649730264873:role/LambdaAdmin \
+      --role $role \
       --environment 'Variables={RUST_BACKTRACE=1}' \
       --tracing-config Mode=Active \
       > /dev/null

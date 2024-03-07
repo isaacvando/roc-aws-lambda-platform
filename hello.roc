@@ -1,24 +1,28 @@
-app "main"
+app "hello"
     packages {
         pf: "platform/main.roc",
         json: "https://github.com/lukewilliamboswell/roc-json/releases/download/0.6.3/_2Dh4Eju2v_tFtZeMq8aZ9qw2outG04NbkmKpFhXS_4.tar.br",
     }
     imports [
+        pf.Task.{ Task },
         json.Core,
     ]
     provides [main] to pf
 
+# This type mirrors the JSON that is passed into a Lambda when it is used with an API Gateway or Function URL.
+# For our purposes, we only need the rawPath field, but we could add more as needed.
 Request : {
     rawPath : Str,
 }
 
-main : List U8 -> Str
+main : List U8 -> Task Str Str
 main = \bytes ->
     when Decode.fromBytes bytes Core.json is
-        Err _ -> "I was unable to decode the request into the expected type"
+        Err _ -> Task.err "I was unable to decode the request into the expected type"
         Ok req ->
-            respond req
+            respond req |> Task.ok
 
+# Generate the serialized JSON response Lambda expects for rendering a web page
 respond : Request -> Str
 respond = \req ->
     serializedHtml =
@@ -30,6 +34,7 @@ respond = \req ->
     {"statusCode": 200,"headers":{"Content-Type": "text/html"},"body":$(serializedHtml)}
     """
 
+# Generate the HTML body to be rendered when a user visits the Function URL for this Lambda
 body : Request -> Str
 body = \req ->
     name =

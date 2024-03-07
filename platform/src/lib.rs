@@ -5,6 +5,7 @@ use roc_std::RocList;
 use roc_std::RocStr;
 mod http_client;
 mod roc_app;
+use roc_fn::roc_fn;
 
 // extern "C" {
 //     #[link_name = "roc__mainForHost_1_exposed_generic"]
@@ -84,7 +85,9 @@ pub unsafe extern "C" fn roc_shm_open(
     libc::shm_open(name, oflag, mode as libc::c_uint)
 }
 
-fn roc_fx_sendRequest(roc_request: &roc_app::InternalRequest) -> roc_app::InternalResponse {
+#[roc_fn(name = "sendRequest")]
+fn send_req(roc_request: &roc_app::InternalRequest) -> roc_app::InternalResponse {
+    println!("in send_req");
     http_client::send_req(roc_request)
 }
 
@@ -98,7 +101,6 @@ fn roc_fx_sendRequest(roc_request: &roc_app::InternalRequest) -> roc_app::Intern
 //     roc_str.as_str().to_string()
 // }
 
-
 #[repr(C)]
 #[derive(Debug)]
 pub struct RocFunction_86 {
@@ -111,23 +113,34 @@ impl RocFunction_86 {
             fn roc__mainForHost_0_caller(
                 arg0: *const (),
                 closure_data: *mut u8,
-                output: *mut String,
+                output: *mut RocStr,
             );
         }
 
         let mut output = core::mem::MaybeUninit::uninit();
+        output.write(RocStr::default());
 
         unsafe {
             roc__mainForHost_0_caller(&(), self.closure_data.as_mut_ptr(), output.as_mut_ptr());
 
-            output.assume_init()
+            println!("thunk being forced");
+            // println!("{}", output.);
+            // let o = output.assume_init();
+            // println!("o: {}", o);
+            // o
+            // println!("output capacity: {}", (*output.as_ptr()).capacity());
+            // (*output.as_ptr()).clone()
+            output.assume_init().to_string()
         }
     }
 }
 
 pub fn mainForHost(request: Vec<u8>) -> RocFunction_86 {
     extern "C" {
-        fn roc__mainForHost_1_exposed_generic(_: *mut u8, _: &mut core::mem::ManuallyDrop<RocList<u8>>);
+        fn roc__mainForHost_1_exposed_generic(
+            _: *mut u8,
+            _: &mut core::mem::ManuallyDrop<RocList<u8>>,
+        );
         fn roc__mainForHost_1_exposed_size() -> i64;
     }
 
@@ -140,11 +153,13 @@ pub fn mainForHost(request: Vec<u8>) -> RocFunction_86 {
         ret.closure_data.resize(capacity, 0);
 
         let bytes = RocList::from(request.as_slice());
-    
+
         roc__mainForHost_1_exposed_generic(
             ret.closure_data.as_mut_ptr(),
             &mut core::mem::ManuallyDrop::new(bytes),
         );
+
+        println!("before return");
 
         ret
     }

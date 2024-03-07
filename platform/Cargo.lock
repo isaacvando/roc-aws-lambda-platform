@@ -326,6 +326,7 @@ dependencies = [
  "lambda_runtime",
  "libc",
  "reqwest",
+ "roc_fn",
  "roc_std",
  "serde",
  "serde_json",
@@ -781,6 +782,16 @@ dependencies = [
  "spin",
  "untrusted",
  "windows-sys 0.52.0",
+]
+
+[[package]]
+name = "roc_fn"
+version = "1.0.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "roc_std",
+ "syn 1.0.109",
 ]
 
 [[package]]

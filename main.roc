@@ -19,7 +19,6 @@ main = \_ ->
     dbg "dbg message"
 
     Http.getUtf8 "https://isaacvando.com"
-    |> Task.map \_ -> "success"
     |> Task.mapErr \_ -> "error"
 
 # toJson = \str ->

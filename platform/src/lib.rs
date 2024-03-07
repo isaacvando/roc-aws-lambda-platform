@@ -7,11 +7,6 @@ mod http_client;
 mod roc_app;
 use roc_fn::roc_fn;
 
-// extern "C" {
-//     #[link_name = "roc__mainForHost_1_exposed_generic"]
-//     fn roc_main(_: &mut RocStr, _: &mut core::mem::ManuallyDrop<RocList<u8>>);
-// }
-
 #[no_mangle]
 pub unsafe extern "C" fn roc_alloc(size: usize, _alignment: u32) -> *mut c_void {
     return libc::malloc(size);
@@ -87,19 +82,8 @@ pub unsafe extern "C" fn roc_shm_open(
 
 #[roc_fn(name = "sendRequest")]
 fn send_req(roc_request: &roc_app::InternalRequest) -> roc_app::InternalResponse {
-    println!("in send_req");
     http_client::send_req(roc_request)
 }
-
-// #[no_mangle]
-// pub fn rust_main(request: Vec<u8>) -> String {
-//     let mut roc_str = RocStr::default();
-//     let bytes = RocList::from(request.as_slice());
-
-//     unsafe { roc_main(&mut roc_str, &mut core::mem::ManuallyDrop::new(bytes)) };
-
-//     roc_str.as_str().to_string()
-// }
 
 #[repr(C)]
 #[derive(Debug)]
@@ -123,13 +107,6 @@ impl RocFunction_86 {
         unsafe {
             roc__mainForHost_0_caller(&(), self.closure_data.as_mut_ptr(), output.as_mut_ptr());
 
-            println!("thunk being forced");
-            // println!("{}", output.);
-            // let o = output.assume_init();
-            // println!("o: {}", o);
-            // o
-            // println!("output capacity: {}", (*output.as_ptr()).capacity());
-            // (*output.as_ptr()).clone()
             output.assume_init().to_string()
         }
     }
@@ -158,8 +135,6 @@ pub fn mainForHost(request: Vec<u8>) -> RocFunction_86 {
             ret.closure_data.as_mut_ptr(),
             &mut core::mem::ManuallyDrop::new(bytes),
         );
-
-        println!("before return");
 
         ret
     }

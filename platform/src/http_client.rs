@@ -79,11 +79,8 @@ pub fn send_req(roc_request: &InternalRequest) -> InternalResponse {
         }
     };
 
-    println!("before execute");
     match client.execute(request) {
         Ok(response) => {
-            println!("in ok");
-
             let headers_iter = response
                 .headers()
                 .iter()
@@ -98,7 +95,6 @@ pub fn send_req(roc_request: &InternalRequest) -> InternalResponse {
             let bytes = response.bytes().unwrap_or_default();
             let body: RocList<u8> = RocList::from_iter(bytes.into_iter());
 
-            println!("about to return");
             InternalResponse {
                 status,
                 body,
@@ -107,8 +103,6 @@ pub fn send_req(roc_request: &InternalRequest) -> InternalResponse {
         }
 
         Err(err) => {
-            println!(" in err");
-
             if err.is_timeout() {
                 InternalResponse {
                     status: 408, // 408 Request Timeout

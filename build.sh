@@ -1,7 +1,13 @@
 #!/bin/bash
 set -euo pipefail
 
-roc build main.roc --lib --output libapp.so
+if [ -z "$1" ]; then
+    echo "Error: No file name provided."
+    echo "Usage: ./build.sh <file_name>"
+    exit 1
+fi
+
+roc build $1 --lib --output libapp.so --target linux-x64
 
 # We need to include libapp.so.1 in the final zip archive
 mv libapp.so.1.0 libapp.so.1

@@ -18,7 +18,7 @@ main = \_ ->
     |> Task.mapErr \_ -> "Error fetching page"
 ```
 
-This (currently broken) function renders a webpage that can be accessed via a [Lambda URL](https://docs.aws.amazon.com/lambda/latest/dg/urls-configuration.html):
+This function renders a webpage that can be accessed via a [Lambda URL](https://docs.aws.amazon.com/lambda/latest/dg/urls-configuration.html):
 ```roc
 # hello.roc
 

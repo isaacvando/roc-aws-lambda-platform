@@ -2,6 +2,7 @@
 
 use core::ffi::c_void;
 use roc_std::{RocList, RocResult, RocStr};
+use std::time::{SystemTime, UNIX_EPOCH};
 mod http_client;
 mod roc_app;
 use roc_fn::roc_fn;
@@ -111,6 +112,16 @@ fn env_dict() -> RocList<(RocStr, RocStr)> {
     }
 
     RocList::from_slice(entries.as_slice())
+}
+
+#[roc_fn(name = "posixTime")]
+fn posix_time() -> roc_std::U128 {
+    // TODO in future may be able to avoid this panic by using C APIs
+    let since_epoch = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("time went backwards");
+
+    roc_std::U128::from(since_epoch.as_nanos())
 }
 
 #[repr(C)]

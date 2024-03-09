@@ -10,6 +10,7 @@ hosted Effect
         sendRequest,
         envList,
         envVar,
+        posixTime,
     ]
     imports [
         InternalHttp,
@@ -25,3 +26,6 @@ sendRequest : Box InternalHttp.InternalRequest -> Effect InternalHttp.InternalRe
 # Env
 envList : Effect (List (Str, Str))
 envVar : Str -> Effect (Result Str {})
+
+# Utc
+posixTime : Effect U128

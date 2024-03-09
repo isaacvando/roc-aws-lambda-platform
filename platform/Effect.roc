@@ -8,6 +8,8 @@ hosted Effect
         loop,
         stdoutLine,
         sendRequest,
+        envList,
+        envVar,
     ]
     imports [
         InternalHttp,
@@ -19,3 +21,7 @@ stdoutLine : Str -> Effect {}
 
 # Http
 sendRequest : Box InternalHttp.InternalRequest -> Effect InternalHttp.InternalResponse
+
+# Env
+envList : Effect (List (Str, Str))
+envVar : Str -> Effect (Result Str {})

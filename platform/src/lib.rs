@@ -1,8 +1,7 @@
 #![allow(non_snake_case)]
 
 use core::ffi::c_void;
-use roc_std::RocList;
-use roc_std::RocStr;
+use roc_std::{RocList, RocResult, RocStr};
 mod http_client;
 mod roc_app;
 use roc_fn::roc_fn;
@@ -88,6 +87,30 @@ fn send_req(roc_request: &roc_app::InternalRequest) -> roc_app::InternalResponse
 #[roc_fn(name = "stdoutLine")]
 fn stdout_line(roc_str: &RocStr) {
     print!("{}\n", roc_str.as_str());
+}
+
+#[roc_fn(name = "envVar")]
+fn env_var(roc_str: &RocStr) -> RocResult<RocStr, ()> {
+    match std::env::var_os(roc_str.as_str()) {
+        Some(os_str) => RocResult::ok(RocStr::from(os_str.to_string_lossy().to_string().as_str())),
+        None => RocResult::err(()),
+    }
+}
+
+#[roc_fn(name = "envList")]
+fn env_dict() -> RocList<(RocStr, RocStr)> {
+    use std::borrow::Borrow;
+
+    let mut entries = Vec::new();
+
+    for (key, val) in std::env::vars_os() {
+        let key = RocStr::from(key.to_string_lossy().borrow());
+        let value = RocStr::from(val.to_string_lossy().borrow());
+
+        entries.push((key, value));
+    }
+
+    RocList::from_slice(entries.as_slice())
 }
 
 #[repr(C)]

@@ -85,6 +85,11 @@ fn send_req(roc_request: &roc_app::InternalRequest) -> roc_app::InternalResponse
     http_client::send_req(roc_request)
 }
 
+#[roc_fn(name = "stdoutLine")]
+fn stdout_line(roc_str: &RocStr) {
+    print!("{}\n", roc_str.as_str());
+}
+
 #[repr(C)]
 #[derive(Debug)]
 pub struct RocFunction_86 {

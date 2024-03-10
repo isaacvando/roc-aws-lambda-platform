@@ -14,9 +14,9 @@
 #![allow(clippy::needless_borrow)]
 #![allow(clippy::clone_on_copy)]
 
+use crate::roc_app::{InternalHeader, InternalRequest, InternalResponse};
 use roc_std::{RocList, RocStr};
 use std::{iter::FromIterator, time::Duration};
-use crate::roc_app::{InternalRequest, InternalResponse, InternalHeader, InternalMethod};
 
 pub fn send_req(roc_request: &InternalRequest) -> InternalResponse {
     let mut builder = reqwest::blocking::ClientBuilder::new();
@@ -38,8 +38,8 @@ pub fn send_req(roc_request: &InternalRequest) -> InternalResponse {
     };
 
     let method = {
-        use reqwest::Method;
         use crate::roc_app::InternalMethod::*;
+        use reqwest::Method;
 
         match roc_request.method {
             Connect => Method::CONNECT,

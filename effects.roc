@@ -19,7 +19,6 @@ main = \_ ->
     {} <- File.writeUtf8 path "I'm in a file!"
         |> Task.mapErr \e -> "Error writing to file: $(Inspect.toStr e)"
         |> Task.await
-
     {} <- Stdout.line "Successfully wrote to file" |> Task.await
 
     content <- File.readUtf8 path

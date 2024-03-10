@@ -1,26 +1,53 @@
-# roc-aws-lambda :construction:
+# roc-aws-lambda
 
-This platform provides support for writing AWS Lambda Functions using Roc. It is a work in progress and can only be used on Linux at the moment. The only effect implemented currently is sending HTTP requests.
+roc-aws-lambda is a platform that provides support for writing AWS Lambda Functions using Roc. It can only be used on Linux currently.
 
 ## Installing
 You will need a recent version of Roc and the [aws-lambda-rust-runtime](https://github.com/awslabs/aws-lambda-rust-runtime) installed to compile a Lambda and an AWS account to deploy it in :rocket:.
 
 ## Examples
-Each function accepts a `List U8` as an argument and returns a `Task Str Str`. The input will be serialized JSON and the output must be also. If the platform cannot convert output string into a valid JSON value, it will default it to a JSON string.
+Each function accepts a `List U8` as an argument and returns a `Task Str Str`. The input will be JSON and the output must be also. If the platform cannot convert the output string into a valid JSON value, it treat it as a JSON string containing the value returned by the Roc app.
 
-This function makes an HTTP request when invoked:
+Hello world looks like this:
 ```roc
-# http.roc
+# hello.roc
+
+main : List U8 -> Task Str Str
+main = \_ -> Task.ok "Hello, World!"
+```
+
+These are some of the effects the platform supports:
+```roc
+# effects.roc
 
 main : List U8 -> Task Str Str
 main = \_ ->
+    path = Path.fromStr "/tmp/file.txt"
+    {} <- File.writeUtf8 path "I'm in a file!"
+        |> Task.mapErr \e -> "Error writing to file: $(Inspect.toStr e)"
+        |> Task.await
+    {} <- Stdout.line "Successfully wrote to file" |> Task.await
+
+    content <- File.readUtf8 path
+        |> Task.mapErr \_ -> "Error reading from file"
+        |> Task.await
+    {} <- Stdout.line "The file content was \"$(content)\"" |> Task.await
+
+    var <- Env.var "SOME_ENV_VAR"
+        |> Task.mapErr \_ -> "Env var not found"
+        |> Task.await
+    {} <- Stdout.line "SOME_ENV_VAR is set to $(var)" |> Task.await
+
+    now <- Utc.now |> Task.await
+    {} <- Stdout.line "The time is $(Utc.toIso8601Str now)" |> Task.await
+
     Http.getUtf8 "https://example.com"
     |> Task.mapErr \_ -> "Error fetching page"
 ```
 
-This function renders a webpage that can be accessed via a [Lambda URL](https://docs.aws.amazon.com/lambda/latest/dg/urls-configuration.html):
+This platform can be used to write a function that serves a web app from a [Lambda URL](https://docs.aws.amazon.com/lambda/latest/dg/urls-configuration.html):
 ```roc
-# hello.roc
+# webpage.roc
 
 # This type mirrors the JSON that is passed into a Lambda when it is used with an API Gateway or Function URL.
 # For our purposes, we only need the rawPath field, but we could add more as needed.
@@ -35,7 +62,7 @@ main = \bytes ->
         Ok req ->
             respond req |> Task.ok
 
-# Generate the serialized JSON response Lambda expects for rendering a web page
+# Generate the JSON response Lambda expects for rendering a web page
 respond : Request -> Str
 respond = \req ->
     serializedHtml =
@@ -82,8 +109,7 @@ Then you can deploy the Lambda to your AWS account with the deployment script:
 ```bash
 $ ./deploy.sh yourfunction arn:aws:iam::{your_account_id}:role/{your_role_name}
 ```
-
-Or you can manually upload the `bootstrap.zip` output by `build.sh` to the AWS Console.
+or you can manually upload the `bootstrap.zip` output by `build.sh` to the AWS Console.
 
 ## Contributing
 
@@ -93,9 +119,7 @@ PRs are very welcome!
 
 It would be great to have all of these features eventually:
 
-- [ ] All of the effects that you would reasonably expect to be included.
 - [ ] The ability to compile Lambdas from MacOS.
-- [ ] Properly configured glue.
 - [ ] A more robust build process.
 - [ ] A more robust deployment process.
 - [ ] The ability to use Lambda functions with the local development server provided by the Rust runtime.

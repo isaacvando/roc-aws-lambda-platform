@@ -1,6 +1,16 @@
 platform "roc-aws-lambda"
     requires {} { main : List U8 -> Task Str Str }
-    exposes []
+    exposes [
+        Path,
+        Env,
+        File,
+        FileMetadata,
+        Http,
+        Stdout,
+        Task,
+        Url,
+        Utc,
+    ]
     packages {}
     imports [Task.{ Task }]
     provides [mainForHost]

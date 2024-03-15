@@ -1,6 +1,8 @@
 # roc-aws-lambda
+A platform that provides support for writing AWS Lambda Functions using Roc. It can only be used on Linux currently.
 
-roc-aws-lambda is a platform that provides support for writing AWS Lambda Functions using Roc. It can only be used on Linux currently.
+See also [roc-aws-lambda-runtime](https://github.com/isaacvando/roc-aws-lambda-runtime), a custom runtime for Lambda written entirely in Roc.
+
 
 ## Installing
 You will need a recent version of Roc and the [aws-lambda-rust-runtime](https://github.com/awslabs/aws-lambda-rust-runtime) installed to compile a Lambda and an AWS account to deploy it in :rocket:.

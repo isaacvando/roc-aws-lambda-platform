@@ -1,16 +1,21 @@
-# roc-aws-lambda
+# roc-aws-lambda-platform
+
+See instead [roc-aws-lambda](https://github.com/isaacvando/roc-aws-lambda) for a solution using Basic CLI.
+
+---
+
 A platform that provides support for writing AWS Lambda Functions using Roc. It can only be used on Linux currently.
 
-See also [roc-aws-lambda-runtime](https://github.com/isaacvando/roc-aws-lambda-runtime), a custom runtime for Lambda written entirely in Roc.
-
-
 ## Installing
+
 You will need a recent version of Roc and the [aws-lambda-rust-runtime](https://github.com/awslabs/aws-lambda-rust-runtime) installed to compile a Lambda and an AWS account to deploy it in :rocket:.
 
 ## Examples
+
 Each function accepts a `List U8` as an argument and returns a `Task Str Str`. The input will be JSON and the output must be also. If the platform cannot convert the output string into a valid JSON value, it treat it as a JSON string containing the value returned by the Roc app.
 
 Hello world looks like this:
+
 ```roc
 # hello.roc
 
@@ -19,6 +24,7 @@ main = \_ -> Task.ok "Hello, World!"
 ```
 
 These are some of the effects the platform supports:
+
 ```roc
 # effects.roc
 
@@ -48,6 +54,7 @@ main = \_ ->
 ```
 
 This platform can be used to write a function that serves a web app from a [Lambda URL](https://docs.aws.amazon.com/lambda/latest/dg/urls-configuration.html):
+
 ```roc
 # webpage.roc
 
@@ -103,14 +110,19 @@ body = \req ->
 ```
 
 ## Compiling
+
 To compile a function, use the included build script:
+
 ```bash
 $ ./build.sh yourfunction.roc
 ```
+
 Then you can deploy the Lambda to your AWS account with the deployment script:
+
 ```bash
 $ ./deploy.sh yourfunction arn:aws:iam::{your_account_id}:role/{your_role_name}
 ```
+
 or you can manually upload the `bootstrap.zip` output by `build.sh` to the AWS Console.
 
 ## Contributing
